@@ -1,13 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r echo=TRUE}
+
+```r
 if(!file.exists('activity.csv'))  
     unzip('activity.zip')  
 activityData <- read.csv("activity.csv")  
@@ -38,24 +34,54 @@ intervals <- as.numeric(levels(activityData$interval))
 
 Calculate the mean and median number of steps taken per day
 
-```{r}
+
+```r
 numSteps <- tapply(activityData$steps, activityData$date, sum, na.rm=TRUE)
 str(numSteps)
-hist(numSteps)
+```
 
+```
+##  int [1:61(1d)] 0 126 11352 12116 13294 15420 11015 0 12811 9900 ...
+##  - attr(*, "dimnames")=List of 1
+##   ..$ : chr [1:61] "2012-10-01" "2012-10-02" "2012-10-03" "2012-10-04" ...
+```
+
+```r
+hist(numSteps)
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)
+
+```r
 mean(numSteps)
 ```
 
-```{r}
+```
+## [1] 9354.23
+```
+
+
+```r
 median(numSteps)
 ```
 
+```
+## [1] 10395
+```
+
 ### Histogram of total number of steps taken each day
-```{r}
+
+```r
 library(ggplot2)
 
 qplot(numSteps,xlab="Total Steps Per Day",ylab="Frequency",main = "Histogram of Number Of Steps taken each day")
 ```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)
 
 
 
@@ -63,7 +89,8 @@ qplot(numSteps,xlab="Total Steps Per Day",ylab="Frequency",main = "Histogram of 
 
 Let's make a time series plot of the 5 minute intervals (x axis) and the average number of steps taken, averaged across all days (y axis)
 
-```{r}
+
+```r
 #calculate the mean steps for each interval
 avgSteps <- tapply(activityData$steps, activityData$time, mean, na.rm=TRUE)
 
@@ -79,20 +106,28 @@ myPlot +
     ylab("Avg Num Steps Taken")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)
+
 ## Imputing missing values
 
 Find missing values:
 
-```{r}
+
+```r
 #find rows of missing values
 isNAs <- is.na(activityData)
 countNA = sum(isNAs)
 print(countNA)
 ```
 
+```
+## [1] 2304
+```
+
 Fill in missing values; we'll use the 5 minute interval mean to keep the data simliar
 
-```{r}
+
+```r
 #create a copy to preserve original
 cleanData <- activityData
 
@@ -103,13 +138,53 @@ cleanData$steps[is.na(cleanData$steps)] <-
 summary(activityData)
 ```
 
-```{r}
+```
+##      steps             date               interval    
+##  Min.   :  0.00   Min.   :2012-10-01   0      :   61  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   5      :   61  
+##  Median :  0.00   Median :2012-10-31   10     :   61  
+##  Mean   : 37.38   Mean   :2012-10-31   15     :   61  
+##  3rd Qu.: 12.00   3rd Qu.:2012-11-15   20     :   61  
+##  Max.   :806.00   Max.   :2012-11-30   25     :   61  
+##  NA's   :2304                          (Other):17202  
+##    date.time                        time                    
+##  Min.   :2012-10-01 00:00:00   Min.   :2016-03-28 00:00:00  
+##  1st Qu.:2012-10-16 05:58:45   1st Qu.:2016-03-28 05:58:45  
+##  Median :2012-10-31 11:57:30   Median :2016-03-28 11:57:30  
+##  Mean   :2012-10-31 11:57:30   Mean   :2016-03-28 11:57:30  
+##  3rd Qu.:2012-11-15 17:56:15   3rd Qu.:2016-03-28 17:56:15  
+##  Max.   :2012-11-30 23:55:00   Max.   :2016-03-28 23:55:00  
+## 
+```
+
+
+```r
 summary(cleanData)
+```
+
+```
+##      steps             date               interval    
+##  Min.   :  0.00   Min.   :2012-10-01   0      :   61  
+##  1st Qu.:  0.00   1st Qu.:2012-10-16   5      :   61  
+##  Median :  0.00   Median :2012-10-31   10     :   61  
+##  Mean   : 37.38   Mean   :2012-10-31   15     :   61  
+##  3rd Qu.: 27.00   3rd Qu.:2012-11-15   20     :   61  
+##  Max.   :806.00   Max.   :2012-11-30   25     :   61  
+##                                        (Other):17202  
+##    date.time                        time                    
+##  Min.   :2012-10-01 00:00:00   Min.   :2016-03-28 00:00:00  
+##  1st Qu.:2012-10-16 05:58:45   1st Qu.:2016-03-28 05:58:45  
+##  Median :2012-10-31 11:57:30   Median :2016-03-28 11:57:30  
+##  Mean   :2012-10-31 11:57:30   Mean   :2016-03-28 11:57:30  
+##  3rd Qu.:2012-11-15 17:56:15   3rd Qu.:2016-03-28 17:56:15  
+##  Max.   :2012-11-30 23:55:00   Max.   :2016-03-28 23:55:00  
+## 
 ```
 
 Histogram of the new Data Set
 
-```{r}
+
+```r
 cleanNumSteps <- tapply(cleanData$steps, cleanData$date, sum)
 
 qplot(
@@ -118,13 +193,20 @@ qplot(
     ylab='Frequency')
 ```
 
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)
+
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r}
+
+```r
 #add Day to our cleanData
 cleanData$Day <- weekdays(as.Date(as.character(cleanData$date)))
 
@@ -147,7 +229,8 @@ cleanPattern <- data.frame(time=as.POSIXct(names(cleanAvgSteps)),
 ```
 Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
 
-```{r}
+
+```r
 library(scales)
 
 ggplot(cleanPattern, aes(time, cleanAvgSteps)) +
@@ -157,4 +240,6 @@ ggplot(cleanPattern, aes(time, cleanAvgSteps)) +
     scale_x_datetime(labels = date_format(format =' %H:%M')) +
     facet_grid(. ~ DayType)
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)
 
